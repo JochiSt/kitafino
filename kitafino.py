@@ -1,11 +1,9 @@
 import requests
-from bs4 import BeautifulSoup
-import re
 from datetime import datetime, timedelta
 
 import credentials
 
-def get_kitafino_response():
+def get_kitafino_response(next_week = True):
     #login to kitafino
     s = requests.Session()
     s.get('https://www.kitafino.de')
@@ -19,8 +17,10 @@ def get_kitafino_response():
     #calculate epoch of monday this week 11:00
     now = datetime.now()
     monday = now - timedelta(days = now.weekday())
-    monday=monday.replace(hour=11,minute=0,second=0);
-    monday= int((monday - datetime(1970, 1, 1)).total_seconds())
+    monday = monday.replace(hour=10,minute=0,second=0);
+    monday = int((monday - datetime(1970, 1, 1)).total_seconds())
+    if next_week:
+        monday += 7*24*60*60 # for next week
 
     params = {'kw_ts': monday}
     kitafino_raw = s.get('https://www.kitafino.de/sys_k2/index.php?action=bestellen', params=params)
