@@ -1,7 +1,7 @@
 
 ### Imports
 import sys
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta, time, date
 import caldav
 import credentials
 
@@ -34,7 +34,7 @@ for cal in calendars:
 
 if calendar:
     may_event = calendar.save_event(
-        dtstart=datetime(2025, 6, 17, 6),
-        dtend=datetime(2025, 6, 18, 1),
-        summary="Do the needful",
+        dtstart = date(2025, 6, 17),
+        dtend = date(2025, 6, 17),
+        summary = "Do the needful",
     )
