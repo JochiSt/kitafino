@@ -1,5 +1,5 @@
 
 login = {
-    'username' : 'YOUR_USERNAME'
+    'username' : 'YOUR_USERNAME',
     'password' : 'YOUR_PASSWORD',
 }
