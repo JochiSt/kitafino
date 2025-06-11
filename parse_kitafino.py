@@ -1,7 +1,9 @@
 from bs4 import BeautifulSoup
-
+import datetime
 
 def extract_meal_data(html_content):
+
+    meals = []
 
     # Create a BeautifulSoup object
     soup = BeautifulSoup(html_content, 'lxml')
@@ -13,16 +15,20 @@ def extract_meal_data(html_content):
     for item in meal_items:
         # Find the day of the week
         day_of_week = item.find('strong').text.strip()
+        meal_date = datetime.datetime.strptime(day_of_week.split()[1], '%d.%m.%Y').date()
 
         dish_name = item.find('span', class_='preis_info_zu_men')
         if not dish_name:
-            print(f'{day_of_week} - no meal found')
+            meals.append( (meal_date, None) )
             continue
 
         dish_name = dish_name.next_sibling.strip()
         price = item.find('div', class_='preis_button').text.strip()
 
-        print(f'{day_of_week}: {dish_name} - Price: {price}')
+        #print(f'{meal_date}: {dish_name} - Price: {price}')
+        meals.append( (meal_date, dish_name) )
+
+    return meals
 
 if __name__ == "__main__":
     # Load HTML content from a .txt file
@@ -30,4 +36,5 @@ if __name__ == "__main__":
         html_content = file.read()
 
     # Call the function to extract meal data
-    extract_meal_data(html_content)
+    meals = extract_meal_data(html_content)
+    print(meals)
