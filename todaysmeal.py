@@ -3,14 +3,17 @@ from bs4 import BeautifulSoup
 import re
 from datetime import datetime, timedelta
 
-import credentials 
-
-s = requests.Session()
+import credentials
 
 #login to kitafino
+s = requests.Session()
 s.get('https://www.kitafino.de')
-r_login  =s.post('https://www.kitafino.de/sys_k2/index.php?action=do_login', data={'passwort': credentials.login['password'], 'benutzername': credentials.login['username'] })
-
+r_login  =s.post('https://www.kitafino.de/sys_k2/index.php?action=do_login',
+                    data={
+                        'passwort': credentials.kitafino_login['password'],
+                        'benutzername': credentials.kitafino_login['username'],
+                        }
+                )
 
 #calculate epoch of monday this week 11:00
 now = datetime.now()
@@ -51,12 +54,12 @@ for bar in foo:
     sep = ' '
     sep = '€'
     order = order.split(sep, 1)[0]
-    
+
     listOfWords = order.split(" ", 1)
-    if len(listOfWords) > 0: 
+    if len(listOfWords) > 0:
         order = listOfWords[1]
     print(item_date, order)
-    
+
     today=datetime.now()
     if item_date.year==today.year:
        if item_date.month==today.month:
@@ -64,4 +67,4 @@ for bar in foo:
                 order = order.replace('(', ' (')
                 returnvalue=order
                 #print(mystring)
-    
+
