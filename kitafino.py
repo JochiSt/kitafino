@@ -7,7 +7,7 @@ def get_kitafino_response(next_week = True):
     #login to kitafino
     s = requests.Session()
     s.get('https://www.kitafino.de')
-    r_login  =s.post('https://www.kitafino.de/sys_k2/index.php?action=do_login',
+    r_login  =s.post('https://auth.kitafino.de/sys_k2/index.php?action=do_login',
                         data={
                             'passwort': credentials.kitafino_login['password'],
                             'benutzername': credentials.kitafino_login['username'],
@@ -23,8 +23,8 @@ def get_kitafino_response(next_week = True):
         monday += 7*24*60*60 # for next week
 
     params = {'kw_ts': monday}
-    kitafino_raw = s.get('https://www.kitafino.de/sys_k2/index.php?action=bestellen', params=params)
-    kitafino_close = s.get('https://www.kitafino.de/sys_k2/index.php?action=log_out')
+    kitafino_raw = s.get('https://app.kitafino.de/sys_k2/index.php?action=bestellen', params=params)
+    kitafino_close = s.get('https://app.kitafino.de/sys_k2/index.php?action=log_out')
     s.close()
 
     return kitafino_raw.text
