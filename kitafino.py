@@ -1,5 +1,8 @@
 import requests
 from datetime import datetime, timedelta
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
+from urllib.parse import parse_qs
 
 import credentials
 
@@ -14,15 +17,40 @@ def get_kitafino_response(next_week = True):
                             }
                     )
 
+    url = None
+    soup = BeautifulSoup(r_login.text, "lxml")
+    links = soup.find_all('a')
+
+    # get ACI from links in website
+    for link in links:
+        link_text = link.get('href')
+        if not link_text:
+            continue
+        elif "javascript" in link_text:
+            continue
+        elif "index.php" in link_text:
+            if "aci" in link_text:
+                if not url:
+                    url = link_text
+
+            if "kw_ts" in link_text and "bestellen" in link_text:
+                print(link_text)
+
+    parsed_url = urlparse(url)
+    aci = parse_qs(parsed_url.query)['aci'][0]
+
     #calculate epoch of monday this week 11:00
     now = datetime.now()
     monday = now - timedelta(days = now.weekday())
-    monday = monday.replace(hour=10,minute=0,second=0);
+    monday = monday.replace(hour=11,minute=0,second=0);
     monday = int((monday - datetime(1970, 1, 1)).total_seconds())
     if next_week:
         monday += 7*24*60*60 # for next week
 
-    params = {'kw_ts': monday}
+    params = {
+        'kw_ts': monday,
+        'aci': aci
+        }
     kitafino_raw = s.get('https://app.kitafino.de/sys_k2/index.php?action=bestellen', params=params)
     kitafino_close = s.get('https://app.kitafino.de/sys_k2/index.php?action=log_out')
     s.close()
