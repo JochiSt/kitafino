@@ -21,6 +21,8 @@ def get_kitafino_response(next_week = True):
     soup = BeautifulSoup(r_login.text, "lxml")
     links = soup.find_all('a')
 
+    urls = []
+
     # get ACI from links in website
     for link in links:
         link_text = link.get('href')
@@ -34,9 +36,10 @@ def get_kitafino_response(next_week = True):
                     url = link_text
 
             if "kw_ts" in link_text and "bestellen" in link_text:
-                print(link_text)
+                urls.append(link_text)
+                #print(link_text)
 
-    parsed_url = urlparse(url)
+    parsed_url = urlparse(urls[1])
     aci = parse_qs(parsed_url.query)['aci'][0]
 
     #calculate epoch of monday this week 11:00
@@ -51,8 +54,10 @@ def get_kitafino_response(next_week = True):
         'kw_ts': monday,
         'aci': aci
         }
-    kitafino_raw = s.get('https://app.kitafino.de/sys_k2/index.php?action=bestellen', params=params)
+    #kitafino_raw = s.get('https://app.kitafino.de/sys_k2/index.php?action=bestellen', params=params)
+    kitafino_raw = s.get('https://user.kitafino.de/sys_k2/'+urls[1])
     kitafino_close = s.get('https://app.kitafino.de/sys_k2/index.php?action=log_out')
+    #kitafino_close = s.get('https://user.kitafino.de/sys_k2/index.php?action=log_out')
     s.close()
 
     return kitafino_raw.text
